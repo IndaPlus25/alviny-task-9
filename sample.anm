@@ -1,0 +1,14 @@
+assign void main to function
+    parameter Array args,
+
+    print args.element 0,
+end
+
+assign String foo to string bar,
+
+A-Za-z0-9.,
+
+
+public void main(String[] args) {
+    print(args[0]);
+}
