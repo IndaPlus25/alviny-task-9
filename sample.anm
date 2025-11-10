@@ -1,14 +1,17 @@
-assign void main to function
-    parameter Array args,
+immassign zero to zero plus 8 # this should not do anything
 
-    print args.element 0,
-end
+# the rest should do what it says on the tin
 
-assign String foo to string bar,
-
-A-Za-z0-9.,
-
-
-public void main(String[] args) {
-    print(args[0]);
-}
+immassign iter0 to 1
+immassign iter1 to 2
+immassign cond0 to 3
+immassign cond1 to 4
+immassign temp0 to 5
+immassign temp1 to 6
+immassign temp1 to 7
+immassign arg1  to 8
+immassign arg2  to 9
+immassign save0 to 10
+immassign save1 to 11
+immassign save2 to 12
+immassign save3 to 13
