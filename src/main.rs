@@ -62,7 +62,7 @@ fn main() {
     let args: Vec<String> = args().collect();
     let mut cpu = CPU::new();
 
-    let statements = parse_file(&args[1]);
+    let statements = parse_file(&args[1]).ok().expect("Error: Could not parse Alnum file!");
     for i in statements {
         cpu.execute_operation(i);
     }
