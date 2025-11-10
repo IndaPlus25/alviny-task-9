@@ -1,15 +1,9 @@
-/* syntax:
-statements:
-assign register to op|imm: assigns a reg to an operation
-operations:
-    register1 plus register2: adds the value of register1 plus register2 and returns the sum.
-    register1 times register2: multiplies the value of register1 and register2 and returns the product.
-    
-*/
 
 
-use std::{env::args, io};
 
+use std::{collections::HashMap, env::args, fmt::Error, io};
+
+#[derive(Clone, PartialEq, Eq, Hash)]
 enum Register{
     Zero,
     Stdio,
@@ -28,45 +22,49 @@ enum Register{
     Save2,
     Save3,
 }
+#[derive(Clone)]
+struct CPU {
+    registers: HashMap<Register, u16>
+}
+impl CPU {
+    fn new() -> CPU {
+        CPU {registers: HashMap::from([
+            (Register::Zero, 0),
+            (Register::Stdio, 0),
+            (Register::Iter0, 0),
+            (Register::Iter1, 0),
+            (Register::Cond0, 0),
+            (Register::Cond1, 0),
+            (Register::Temp0, 0),
+            (Register::Temp1, 0),
+            (Register::Temp2, 0),
+            (Register::Arg0, 0),
+            (Register::Arg1, 0),
+            (Register::Arg2, 0),
+            (Register::Save0, 0),
+            (Register::Save1, 0),
+            (Register::Save2, 0),
+            (Register::Save3, 0),
 
-fn register_index(register: Register) -> u8 {
-    match register{
-        Register::Zero => 0,
-        Register::Stdio=> 1,
-        Register::Iter0=> 2,
-        Register::Iter1=> 3,
-        Register::Cond0=> 4,
-        Register::Cond1=> 5,
-        Register::Temp0=> 6,
-        Register::Temp1=> 7,
-        Register::Temp2=> 8,
-        Register::Arg0 => 9,
-        Register::Arg1 => 10,
-        Register::Arg2 => 11,
-        Register::Save0=> 12,
-        Register::Save1=> 13,
-        Register::Save2=> 14,
-        Register::Save3=> 15,
+        ])}
     }
+    fn execute_operation(&mut self, op: String) {
+        todo!()
+    } 
 }
 
-fn parse_file(file: &String) -> Vec<String> {
-    // first failsafe: check if file in 
+fn parse_file(file: &String) -> Result<Vec<String>, Error> {
+    // failsafe: check if file ending is correct. If not, error
+    
     todo!();
 }
-
-fn execute_operation(op: String, regs: Vec<u16>) {
-    todo!();
-}
-
 fn main() {
     let args: Vec<String> = args().collect();
-    let mut registers: Vec<u16> = vec![0; 16];
+    let mut cpu = CPU::new();
 
-    // this is pseudocode
     let statements = parse_file(&args[1]);
     for i in statements {
-        execute_operation(i);
+        cpu.execute_operation(i);
     }
     println!("---Program finished running (Exit code: 0)---");
 }
