@@ -1,7 +1,7 @@
 
 
 
-use std::{collections::HashMap, env::args, fmt::Error, io};
+use std::{collections::HashMap, env::args, fs, io::{self}, process::exit};
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 enum Register{
@@ -21,6 +21,12 @@ enum Register{
     Save1,
     Save2,
     Save3,
+}
+#[derive(Debug)]
+enum InterpreterError{
+    NotAlnumError,
+    SyntaxError,
+
 }
 #[derive(Clone)]
 struct CPU {
@@ -53,16 +59,32 @@ impl CPU {
     } 
 }
 
-fn parse_file(file: &String) -> Result<Vec<String>, Error> {
+fn parse_file(file_path: &String) -> Result<Vec<String>, InterpreterError> {
     // failsafe: check if file ending is correct. If not, error
+    let operations = match *(file_path.split('.').collect::<Vec<_>>().last().unwrap()) == "anm" {
+        true => fs::read_to_string(file_path).expect("Unable to read input file"),
+        false => return Err(InterpreterError::NotAlnumError),
+    };
+
+
+    // split by newline
+    // remove comments on each line
+
+    // purge blank lines
+
+    // we now have a vector full of statements. 
+    // check each statement for disallowd characters (Capital letters, commas, period, )
     
-    todo!();
+    //return it
+    
 }
 fn main() {
     let args: Vec<String> = args().collect();
     let mut cpu = CPU::new();
 
-    let statements = parse_file(&args[1]).expect("Error: Could not parse Alnum file!");
+    let statements = parse_file(&args[1]);
+    println!("{:?}", statements);
+    // exit(0);
     for i in statements {
         cpu.execute_operation(i);
     }
