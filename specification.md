@@ -60,25 +60,35 @@ hash symbol (#): everything after this until the next newline is a comment.
 
 ## Registers
 
-The Alnum language has 16 named registers.
+The Alnum language has 16 named registers, split into 4 sectors.
 
 ```code
 Binary - Name  - Description: Recommended usage (if any)
---------------------------------------------------------------
+
+Sector 00: Special registers ------------------------------
+Binary - Name  - Description: Recommended usage (if any)
 0000   - zero  - always equal to 0.
-0001   - stdio - standard IO buffer.
-0010   - iter0 - Temporary variable 1: iterator variable 1
-0011   - iter1 - Temporary variable 2: iterator variable 2
-0100   - cond0 - Temporary variable 3: conditional variable 1
-0101   - cond1 - Temporary variable 4: conditional variable 2
-0110   - temp0 - Temporary variable 5
-0111   - temp1 - Temporary variable 6
-1000   - temp2 - Temporary variable 7
-1001   - arg0  - Argument 1: Syscall argument
-1010   - arg1  - Argument 2
-1011   - arg2  - Argument 3
-1100   - save0 - Saved variable 1
-1101   - save1 - Saved variable 2
-1110   - save2 - Saved variable 3
-1111   - save3 - Saved variable 4
+0001   - iter0 - Temporary variable 0: iterator variable 1
+0010   - iter1 - Temporary variable 1: iterator variable 2
+0011   - cond  - Temporary variable 2: conditional variable
+
+Sector 01: Temporary variables ----------------------------
+Binary - Name  - Description: Recommended usage (if any)
+0100   - temp0 - Temporary variable 3
+0101   - temp1 - Temporary variable 4
+0110   - temp2 - Temporary variable 5
+0111   - temp3 - Temporary variable 6
+
+Sector 10: Arguments --------------------------------------
+1000   - arg0  - Argument 0: Syscall buffer
+1001   - arg1  - Argument 1: Return Buffer
+1010   - arg2  - Argument 2
+1011   - arg3  - Argument 3
+
+Sector 11: Saved Variables --------------------------------
+Binary - Name  - Description: Recommended usage (if any)
+1100   - save0 - Saved variable 0
+1101   - save1 - Saved variable 1
+1110   - save2 - Saved variable 2
+1111   - save3 - Saved variable 3
 ```
