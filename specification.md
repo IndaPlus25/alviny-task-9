@@ -45,7 +45,6 @@ syscall imm<9 bits, unsigned> reg1: Calls system function number imm using regis
 jump imm<13 bits, signed>: jumps imm steps.
 ```
 
-
 ### Syscall numbers
 
 0: ReadInt. Reads an integer from stdin and writes to reg1.
