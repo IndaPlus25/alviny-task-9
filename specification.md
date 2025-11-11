@@ -13,6 +13,7 @@ Each register is 16 bits in size and is treated as unsigned by default.
 | Register  | `op<15:13>, rs<12:9>, rt<8:5>, rd<4:1>` |
 | Immediate, 2 registers | `op<15:13>, rs<12:9>, rt<8:5>, imm<4:0>`|
 | Immediate, 1 register  | `op<15:13>, rs<12:9>, imm<8:0>`|
+| Immediate, no register | `op<15:13>, imm<12:0>` |
 
 ### Register instructions
 
@@ -35,10 +36,15 @@ jump imm<5 bits, signed> if reg1 greaterthan reg2: Jump imm steps if reg1 > reg2
 ```alnum
 immassign reg1 to imm<9 bits, unsigned>: reg1 = imm
 
-bitshift reg1 by imm<9 bits, signed>: reg1 << imm if imm > 0, else reg 1 >> imm.
-
 syscall imm<9 bits, unsigned> reg1: Calls system function number imm using register reg1, similar to RISC-V's ecall.
 ```
+
+### Immediate Instructions, no register
+
+```alnum
+jump imm<13 bits, signed>: jumps imm steps.
+```
+
 
 ### Syscall numbers
 
