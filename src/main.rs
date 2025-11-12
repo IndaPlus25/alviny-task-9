@@ -1,7 +1,7 @@
 
 
 
-use std::{collections::HashMap, env::args, fs, io::stdin, process::exit};
+use std::{collections::HashMap, env::args, fs, io::{Write, stdin, stdout}, process::exit};
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug)]
 enum Register{
@@ -141,19 +141,24 @@ impl CPU {
 
                 },
                 // 1: PrintUint
-                1 => {print!("{}", *self.registers.get(&reg1).unwrap())}
+                1 => {
+                    print!("{}", *self.registers.get(&reg1).unwrap()); 
+                    stdout().flush().unwrap()
+                }
 
                 // 2: PrintInt
                 2 => {
                     let print_buf = *self.registers.get(&reg1).unwrap();
-                    print!("{}", i16::from_ne_bytes(print_buf.to_ne_bytes()))
+                    print!("{}", i16::from_ne_bytes(print_buf.to_ne_bytes()));
+                    stdout().flush().unwrap();
                 }
 
                 // 3: PrintChar
                 3 => {
                     if *self.registers.get(&reg1).unwrap() <= 127 {
                         let print_buf = *self.registers.get(&reg1).unwrap() as u8 as char;
-                        print!("{}", print_buf)
+                        print!("{}", print_buf);
+                        stdout().flush().unwrap();
                     } else {
                         println!("ASCIIError: Attempted to print invalid Ascii character!");
                         println!("---Program finished running (Exit code: 4)---");
