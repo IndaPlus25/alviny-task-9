@@ -141,12 +141,12 @@ impl CPU {
 
                 },
                 // 1: PrintUint
-                1 => {println!("{}", *self.registers.get(&reg1).unwrap())}
+                1 => {print!("{}", *self.registers.get(&reg1).unwrap())}
 
                 // 2: PrintInt
                 2 => {
                     let print_buf = *self.registers.get(&reg1).unwrap();
-                    println!("{}", i16::from_ne_bytes(print_buf.to_ne_bytes()))
+                    print!("{}", i16::from_ne_bytes(print_buf.to_ne_bytes()))
                 }
 
                 // 3: PrintChar
@@ -162,10 +162,17 @@ impl CPU {
                 }
 
                 // 4: Exit(0)
-                4 => {}
+                4 => {
+                    println!("---Program finished running (Exit code: 0)---");
+                    exit(0)
+
+                }
 
                 // 5: Exit (reg1)
-                5 => {}
+                5 => {
+                    println!("---Program finished running (Exit code: {})---", *self.registers.get(&reg1).unwrap());
+                    exit(*self.registers.get(&reg1).unwrap() as i32)
+                }
                 
                 _ => {
                     println!("BadSyscallError: Invalid system call code");

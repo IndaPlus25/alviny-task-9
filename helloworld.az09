@@ -1,0 +1,30 @@
+#this az09 program prints "hello world!"
+
+immassign arg0 to 104
+syscall 3 arg0
+immassign arg0 to 101
+syscall 3 arg0
+immassign arg0 to 108
+syscall 3 arg0
+immassign arg0 to 108
+syscall 3 arg0
+immassign arg0 to 111
+syscall 3 arg0
+immassign arg0 to 32
+syscall 3 arg0
+immassign arg0 to 119
+syscall 3 arg0
+immassign arg0 to 111
+syscall 3 arg0
+immassign arg0 to 114
+syscall 3 arg0
+immassign arg0 to 108
+syscall 3 arg0
+immassign arg0 to 100
+syscall 3 arg0
+immassign arg0 to 33
+syscall 3 arg0
+immassign arg0 to 13
+syscall 3 arg0
+immassign arg0 to 10
+syscall 3 arg0
