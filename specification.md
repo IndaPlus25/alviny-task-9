@@ -57,9 +57,9 @@ jump imm<13 bits, signed>: jumps imm steps.
 
 3: PrintChar. Reads an integer from reg1 and puts it in stdout as an ASCII char. Errors if the stdio register is larger than the maximum ASCII char index.
 
-4: Exit program with unsigned integer code specified in reg1.
+4: Exit program with code 0.
 
-5: Exit program with signed integer code specified in reg1.
+5: Exit program with unsigned integer code specified in reg1.
 
 ### Interpreter instructions
 
