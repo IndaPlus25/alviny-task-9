@@ -1,4 +1,4 @@
-# az09 Language specification
+# az09 Language Specification
 
 The language name is pronounced "Ay Zed Zero Nine" and is based on the regex that matches the character set that the language uses: `[a-z0-9#\- ]`.
 
@@ -108,3 +108,4 @@ Binary - Name  - Description: Recommended usage (if any)
 1110   - save2 - Saved variable 2
 1111   - save3 - Saved variable 3
 ```
+
