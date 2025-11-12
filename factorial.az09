@@ -60,7 +60,7 @@
 
     immassign cond to 9
 
-    # if userinput is less than 8 jump over the exit op
+    # if userinput is less than or equal to 8 jump over the exit op
         jump 2 if cond greaterthan save0
         immassign arg0 to 1
         syscall 5 arg0
