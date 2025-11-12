@@ -390,5 +390,5 @@ fn main() {
     }
 
 
-    println!("---Program finished running (Exit code: 0)---");
+    println!("---Program finished running (Dropped off bottom)---");
 }
