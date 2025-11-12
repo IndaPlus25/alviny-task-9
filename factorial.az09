@@ -58,10 +58,10 @@
 
 # if user input is greater than 8 ( 16 bit registers cant handle a bigger factorial than 8!), exit with code 1. else keep going
 
-    immassign arg2 to 9
+    immassign cond to 9
 
     # if userinput is less than 8 jump over the exit op
-        jump 2 if arg2 greaterthan save0
+        jump 2 if cond greaterthan save0
         immassign arg0 to 1
         syscall 5 arg0
 
