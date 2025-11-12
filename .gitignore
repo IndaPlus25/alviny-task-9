@@ -1,2 +1,6 @@
 /target
+
+# ignore testing folders and files
 /testing
+
+testing.az09
