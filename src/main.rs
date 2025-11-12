@@ -153,7 +153,7 @@ impl CPU {
                 3 => {
                     if *self.registers.get(&reg1).unwrap() <= 127 {
                         let print_buf = *self.registers.get(&reg1).unwrap() as u8 as char;
-                        println!("{}", print_buf)
+                        print!("{}", print_buf)
                     } else {
                         println!("ASCIIError: Attempted to print invalid Ascii character!");
                         println!("---Program finished running (Exit code: 4)---");
