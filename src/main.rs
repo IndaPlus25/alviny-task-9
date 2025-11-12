@@ -244,7 +244,7 @@ fn get_register(regname: &str) -> Result<Register, InterpreterError> {
 
 fn parse_file(file_path: &String) -> Result<Vec<String>, InterpreterError> {
     // failsafe: check if file ending is correct. If not, error
-    let operations = match *(file_path.split('.').collect::<Vec<_>>().last().unwrap()) == "anm" {
+    let operations = match *(file_path.split('.').collect::<Vec<_>>().last().unwrap()) == "az09" {
         true => fs::read_to_string(file_path).expect("Unable to read input file"),
         false => return Err(InterpreterError::NotAlnumError),
     };

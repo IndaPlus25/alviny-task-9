@@ -1,4 +1,6 @@
-# Alnum Language specification
+# `[a-z0-9#\- ]` Language specification
+
+The language name is pronounced "Ay Zed Zero Nine" and is the regex that matches the character set that the language uses.
 
 The language uses 16-bit instructions,  and 4 bit register addresses (16 registers).
 

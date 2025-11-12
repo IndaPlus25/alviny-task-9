@@ -1,0 +1,28 @@
+immassign zero to 8 # this should not do anything
+
+# the rest should do what it says on the tin
+
+# print "Reg zero: [zero]
+immassign arg0 to 82
+syscall 3 arg0
+immassign arg0 to 101
+syscall 3 arg0
+immassign arg0 to 103
+syscall 3 arg0
+immassign arg0 to 32
+syscall 3 arg0
+immassign arg0 to 90
+syscall 3 arg0
+immassign arg0 to 101
+syscall 3 arg0
+immassign arg0 to 114
+syscall 3 arg0
+immassign arg0 to 111
+syscall 3 arg0
+immassign arg0 to 58
+syscall 3 arg0
+immassign arg0 to 32
+syscall 3 arg0
+
+
+syscall 1 zero
