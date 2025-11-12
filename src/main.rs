@@ -1,7 +1,7 @@
 
 
 
-use std::{collections::HashMap, env::args, fs, io::{self}, process::exit};
+use std::{collections::HashMap, env::args, fs, io::{self, stdin}, process::exit};
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug)]
 enum Register{
@@ -30,7 +30,8 @@ enum InterpreterError{
     NotAlnumError,
     SyntaxError,
     BadRegisterError,
-    BadImmediateError
+    BadImmediateError,
+    BadSyscallError,
 
 }
 
@@ -64,34 +65,80 @@ impl CPU {
 
     // register instructions
     fn assign_plus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> usize {
-        todo!()
+        *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add(*self.registers.get(&reg3).unwrap());
+        0
     }
     fn assign_minus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> usize {
-        todo!()
+        *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_sub(*self.registers.get(&reg3).unwrap());
+        0
     }
 
     //immediate instructions, 2 registers
     fn immassign_plus(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
-        todo!()
+        if check_range_i5(imm) {
+            *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add_signed(imm.into());
+            0
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            exit(2);
+        }
     }
     fn jump_if_eq(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
-        todo!()
+        if check_range_i5(imm) {
+            if self.registers.get(reg1) == self.registers.get(reg2) {
+                imm.try_into().unwrap()
+            } else {0}
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            exit(2);
+        }
     }
     fn jump_if_greater(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
-        todo!()
+        if check_range_i5(imm) {
+            if self.registers.get(reg1) > self.registers.get(reg2) {
+                imm.try_into().unwrap()
+            } else {0}
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            exit(2);
+        }
     }
 
     // Immediate instructions, 1 register
     fn immassign_imm(&mut self, reg1: Register, imm: u16) -> usize {
-        todo!()
+        if check_range_u9(imm) {
+            *self.registers.get_mut(&reg1).unwrap() = imm;
+            0
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            exit(2);
+        }
     }
     fn syscall(&mut self, reg1: Register, imm: u16) -> usize {
-        todo!()
+        if check_range_u9(imm) {
+            match imm {
+                // 0: ReadInt > reg1
+                0 => {
+                    let mut read_buf = String::new();
+                    stdin().read_line(&mut read_buf).ok().unwrap();
+                    read_buf.trim();
+                },
+                
+                _ => {
+                    println!("BadSyscallError: Invalid system call code");
+                    exit(3);
+                }
+
+            }
+            0
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            exit(2);
+        }
     }
 
     //Immediate instructions, no register
-
-    fn jump(imm: i16) -> usize {
+    fn jump(&mut self, imm: i16) -> usize {
         todo!()
     }
 
@@ -100,10 +147,20 @@ impl CPU {
 
 //System instructions here
 
-//Function that returns a Register from a register name in string form
+// Functions that check if an immediate is within range (Rust only has 16 and 8 bit integers, not 5, 9 and 13 bits as I need)
+fn check_range_i5(int: i8) -> bool {
+    todo!()
+}
+fn check_range_u9(int: u16) -> bool {
+    todo!()
+}
+fn check_range_i13(int: i16) -> bool {
+    todo!()
+}
 
+//Function that returns a Register from a register name in string form
 fn get_register(regname: &str) -> Result<Register, InterpreterError> {
-    return match regname {
+    match regname {
         //sector 00
         "zero" => Ok(Register::Zero),
         "iter0" => Ok(Register::Iter0),
@@ -193,6 +250,7 @@ fn main() {
                 match op[4] {
                     "plus" => Ok(cpu.assign_plus(reg1, reg2, reg3)),
                     "minus" => Ok(cpu.assign_minus(reg1, reg2, reg3)),
+                    _ => Err(InterpreterError::SyntaxError),
                 }
             } else {Err(InterpreterError::SyntaxError)},
 
@@ -209,20 +267,61 @@ fn main() {
                             Err(InterpreterError::SyntaxError)
                         }
                     },
-                    4 => {},
+                    4 => {
+                        let reg1 = get_register(op[1]).ok().expect("BadRegisterError: No register of that name!");
+                        let imm: u16 = op[3].parse::<u16>().expect("Invalid immediate size");
+                        Ok(cpu.immassign_imm(reg1, imm))
+                        },
                     _ => Err(InterpreterError::SyntaxError),
                 }
             } else {Err(InterpreterError::SyntaxError)},
-            "jump" => {},
-            "syscall" => {},
+            "jump" => {
+                match op.len() {
+                    6 => {
+                        if op[1] == "if" {
+                            let reg1 = get_register(op[3]).ok().expect("BadRegisterError: No register of that name!");
+                            let reg2 = get_register(op[5]).ok().expect("BadRegisterError: No register of that name!");
+                            let imm: i8 = op[1].parse::<i8>().expect("Invalid immediate size");
+
+
+                            match op[4] {
+                                "equals" => Ok(cpu.jump_if_eq(reg1, reg2, imm)),
+                                "greaterthan" => Ok(cpu.jump_if_greater(reg1, reg2, imm)),
+                                _ => Err(InterpreterError::SyntaxError),
+                            }
+                        } else {
+                            Err(InterpreterError::SyntaxError)
+                        }
+                    }
+
+                    2 => {
+                        let imm: i16 = op[1].parse::<i16>().expect("Invalid immediate size");
+                        Ok(cpu.jump(imm))
+                    },
+                    _ => Err(InterpreterError::SyntaxError)
+                }
+            },
+            "syscall" => {
+                let reg1 = get_register(op[2]).ok().expect("BadRegisterError: No register of that name!");
+                let imm: u16 = op[1].parse::<u16>().expect("Invalid immediate size");
+                Ok(cpu.syscall(reg1, imm))
+            },
 
             _ => Err(InterpreterError::SyntaxError)
         };
 
-        if op[0] == "jump" {
-            line_counter += execution_result
+        let mut jump_number: usize;
+        match execution_result {
+            Ok(_) => {jump_number = execution_result.ok().unwrap() },
+            Err(error) => {
+                println!("{error:?}, core dumped ({cpu:?})");
+                exit(1);
+            }
         }
-
+        
+        if op[0] == "jump" {
+            line_counter += jump_number
+        }
         line_counter += 1;
     }
 

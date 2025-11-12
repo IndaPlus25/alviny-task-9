@@ -1,4 +1,4 @@
-immassign zero to zero plus 8 # this should not do anything
+immassign zero to 8 # this should not do anything
 
 # the rest should do what it says on the tin
 
