@@ -1,6 +1,7 @@
 # This az09 program takes an integer 0-8 as user input and returns the factorial of the number.
 
 # Print "Enter an integer 0-8:"
+    # print "Enter "
     immassign arg0 to 101
     syscall 3 arg0
     immassign arg0 to 110
@@ -14,11 +15,15 @@
     immassign arg0 to 32
     syscall 3 arg0
 
+    # print "an "
     immassign arg0 to 97
+    syscall 3 arg0
+    immassign arg0 to 110
     syscall 3 arg0
     immassign arg0 to 32
     syscall 3 arg0
 
+    # print "integer "
     immassign arg0 to 105
     syscall 3 arg0
     immassign arg0 to 110
@@ -36,6 +41,7 @@
     immassign arg0 to 32
     syscall 3 arg0
 
+    # print "0-8: "
     immassign arg0 to 0
     syscall 1 arg0
     immassign arg0 to 45
@@ -58,6 +64,32 @@
         jump 2 if arg2 greaterthan save0
         immassign arg0 to 1
         syscall 5 arg0
+
+    # since 0! = 1 and the program gets stuck in an infinite loop if we put in 0, we can hardcode it to output 1 when the input is zero.
+    jump 14 if save0 greaterthan zero
+    syscall 1 save0 # print userinput
+    immassign arg0 to 33 # !
+    syscall 3 arg0
+    immassign arg0 to 32 # ' '
+    syscall 3 arg0
+    immassign arg0 to 61 # =
+    syscall 3 arg0
+    immassign arg0 to 32 # ' '
+    syscall 3 arg0
+    
+    # print 1
+    immassign arg0 to 1
+    syscall 1 arg0
+
+    # print newline
+    immassign arg0 to 10
+    syscall 3 arg0
+
+    # exit program
+    syscall 4 zero
+
+
+
     # copy user input to arg2
         assign arg2 to save0 plus zero
 
@@ -86,7 +118,7 @@
         assign temp0 to arg1 plus zero
 
         immassign iter0 to iter0 plus -1
-        jump -9 if iter0 greaterthan save1
+        jump -12 if iter0 greaterthan save1
     # end factorial loop
     assign arg1 to temp0 plus zero
 
@@ -107,7 +139,7 @@
     
     syscall 1 save1
 
-    immassign arg0 10
+    immassign arg0 to 10
     syscall 3 arg0
 
     syscall 4 zero
