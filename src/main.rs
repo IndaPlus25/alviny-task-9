@@ -1,7 +1,7 @@
 
 
 
-use std::{collections::HashMap, env::args, fs, io::{self, stdin}, process::exit};
+use std::{collections::HashMap, env::args, fs, io::stdin, process::exit};
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug)]
 enum Register{
@@ -26,18 +26,20 @@ enum Register{
     Save3,
 }
 #[derive(Debug)]
+#[allow(clippy::enum_variant_names, dead_code)]
 enum InterpreterError{
     NotAlnumError,
     SyntaxError,
     BadRegisterError,
     BadImmediateError,
     BadSyscallError,
-    AsciiError
+    AsciiError,
 
 }
 
 //Emulate CPU
 #[derive(Clone, Debug)]
+#[allow(clippy::upper_case_acronyms)]
 struct CPU {
     registers: HashMap<Register, u16>
 }
@@ -150,7 +152,7 @@ impl CPU {
                 // 3: PrintChar
                 3 => {
                     if *self.registers.get(&reg1).unwrap() <= 127 {
-                        let print_buf = (*self.registers.get(&reg1).unwrap() as u8 as char);
+                        let print_buf = *self.registers.get(&reg1).unwrap() as u8 as char;
                         println!("{}", print_buf)
                     } else {
                         println!("ASCIIError: Attempted to print invalid Ascii character!");
@@ -242,7 +244,7 @@ fn get_register(regname: &str) -> Result<Register, InterpreterError> {
 
 fn parse_file(file_path: &String) -> Result<Vec<String>, InterpreterError> {
     // failsafe: check if file ending is correct. If not, error
-    let mut operations = match *(file_path.split('.').collect::<Vec<_>>().last().unwrap()) == "anm" {
+    let operations = match *(file_path.split('.').collect::<Vec<_>>().last().unwrap()) == "anm" {
         true => fs::read_to_string(file_path).expect("Unable to read input file"),
         false => return Err(InterpreterError::NotAlnumError),
     };
@@ -264,12 +266,7 @@ fn parse_file(file_path: &String) -> Result<Vec<String>, InterpreterError> {
     .collect::<Vec<String>>();
     // purge blank lines
     operations_split.retain(|x| !x.is_empty());
-    println!("{:?}", operations_split);
 
-    // we now have a vector full of statements. 
-    // check each statement for disallowd characters (Capital letters, commas, period, )
-    
-    //return it
     Ok(operations_split)
 }
 fn main() {
@@ -282,17 +279,16 @@ fn main() {
         Ok(vec) => vec,
         Err(error) => panic!("Interpreter Error: {error:?}"),
     };
-    println!("{:?}", statements);
     
     let mut line_counter: usize= 1;
-    while line_counter <= statements.len().try_into().unwrap() {
+    while line_counter <= statements.len() {
         let op = statements[line_counter -1].split_whitespace().collect::<Vec<&str>>();
 
         let execution_result: Result<i16, InterpreterError> = match op[0]{
             "assign" => if op[2] == "to" {
-                let reg1 = get_register(op[1]).ok().expect("BadRegisterError: No register of that name!");
-                let reg2 = get_register(op[3]).ok().expect("BadRegisterError: No register of that name!");
-                let reg3 = get_register(op[5]).ok().expect("BadRegisterError: No register of that name!");
+                let reg1 = get_register(op[1]).expect("BadRegisterError: No register of that name!");
+                let reg2 = get_register(op[3]).expect("BadRegisterError: No register of that name!");
+                let reg3 = get_register(op[5]).expect("BadRegisterError: No register of that name!");
 
 
 
@@ -307,8 +303,8 @@ fn main() {
             "immassign" => if op[2] == "to" { 
                 match op.len() {
                     6 => {
-                        let reg1 = get_register(op[1]).ok().expect("BadRegisterError: No register of that name!");
-                        let reg2 = get_register(op[3]).ok().expect("BadRegisterError: No register of that name!");
+                        let reg1 = get_register(op[1]).expect("BadRegisterError: No register of that name!");
+                        let reg2 = get_register(op[3]).expect("BadRegisterError: No register of that name!");
                         let imm: i8 = op[5].parse::<i8>().expect("Invalid immediate size");
                         if op[4] == "plus" {
                             Ok(cpu.immassign_plus(reg1, reg2, imm))
@@ -317,7 +313,7 @@ fn main() {
                         }
                     },
                     4 => {
-                        let reg1 = get_register(op[1]).ok().expect("BadRegisterError: No register of that name!");
+                        let reg1 = get_register(op[1]).expect("BadRegisterError: No register of that name!");
                         let imm: u16 = op[3].parse::<u16>().expect("Invalid immediate size");
                         Ok(cpu.immassign_imm(reg1, imm))
                         },
@@ -328,8 +324,8 @@ fn main() {
                 match op.len() {
                     6 => {
                         if op[1] == "if" {
-                            let reg1 = get_register(op[3]).ok().expect("BadRegisterError: No register of that name!");
-                            let reg2 = get_register(op[5]).ok().expect("BadRegisterError: No register of that name!");
+                            let reg1 = get_register(op[3]).expect("BadRegisterError: No register of that name!");
+                            let reg2 = get_register(op[5]).expect("BadRegisterError: No register of that name!");
                             let imm: i8 = op[1].parse::<i8>().expect("Invalid immediate size");
 
 
@@ -359,15 +355,15 @@ fn main() {
             _ => Err(InterpreterError::SyntaxError)
         };
 
-        let jump_number: i16;
-        match execution_result {
-            Ok(_) => {jump_number = execution_result.ok().unwrap()},
+        
+        let jump_number: i16 = match execution_result {
+            Ok(_) => {execution_result.ok().unwrap()},
             Err(error) => {
                 println!("{error:?}, registers dumped ({cpu:?})");
                 println!("---Program finished running (Exit code: 1)---");
                 exit(1);
             }
-        }
+        };
         
         if op[0] == "jump" {
             let abs_jump_number: u16 = jump_number.abs().try_into().unwrap();
