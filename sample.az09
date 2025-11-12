@@ -26,3 +26,5 @@ syscall 3 arg0
 
 
 syscall 1 zero
+
+syscall 4 zero
