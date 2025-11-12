@@ -47,7 +47,9 @@ syscall imm<9 bits, unsigned> reg1: Calls system function number imm using regis
 jump imm<13 bits, signed>: jumps imm steps.
 ```
 
-### Syscall numbers
+## Syscall numbers
+
+```alnum
 
 0: ReadUInt. Reads an integer from stdin and writes to reg1.
 
@@ -60,10 +62,17 @@ jump imm<13 bits, signed>: jumps imm steps.
 4: Exit program with code 0.
 
 5: Exit program with unsigned integer code specified in reg1.
+```
 
-### Interpreter instructions
+## Interpreter instructions
 
+```alnum
 hash symbol (#): everything after this until the next newline is a comment.
+```
+
+## Other details
+
+The program advances one line after each instruction, no matter what. When jumping, you should therefore jump to the line *before* the line you want to execute next.
 
 ## Registers
 
