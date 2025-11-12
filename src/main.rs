@@ -88,7 +88,7 @@ impl CPU {
             }
             0
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"immassign plus\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
@@ -99,7 +99,7 @@ impl CPU {
                 imm.into()
             } else {0}
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"jump if equals\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
@@ -110,7 +110,7 @@ impl CPU {
                 imm.into()
             } else {0}
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"jump if greaterthan\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
@@ -124,7 +124,7 @@ impl CPU {
             }
             0
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"immassign reg to imm\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
 
             exit(2);
@@ -160,7 +160,7 @@ impl CPU {
                         print!("{}", print_buf);
                         stdout().flush().unwrap();
                     } else {
-                        println!("ASCIIError: Attempted to print invalid Ascii character!");
+                        println!("ASCIIError in instruction \"syscall 3\": Attempted to print invalid ASCII character");
                         println!("---Program finished running (Exit code: 4)---");
                         exit(4)
                     }
@@ -180,7 +180,7 @@ impl CPU {
                 }
                 
                 _ => {
-                    println!("BadSyscallError: Invalid system call code");
+                    println!("BadSyscallError in instruction \"syscall {imm}\": Invalid system call code");
                     println!("---Program finished running (Exit code: 3)---");
                     exit(3);
                 }
@@ -188,7 +188,7 @@ impl CPU {
             }
             0
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"syscall\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
@@ -199,7 +199,7 @@ impl CPU {
         if check_range_i13(imm) {
             imm
         } else {
-            println!("BadImmediateError: Immediate out of range");
+            println!("BadImmediateError in instruction \"jump imm\": Immediate out of range");
             println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
