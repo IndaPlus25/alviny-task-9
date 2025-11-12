@@ -49,7 +49,7 @@ jump imm<13 bits, signed>: jumps imm steps.
 
 ### Syscall numbers
 
-0: ReadInt. Reads an integer from stdin and writes to reg1.
+0: ReadUInt. Reads an integer from stdin and writes to reg1.
 
 1: PrintUInt. Reads an unsigned integer from reg1 and puts it in stdout.
 
