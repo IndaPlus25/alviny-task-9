@@ -1,0 +1,67 @@
+# This az09 program takes an integer 0-8 as user input and returns the factorial of the number.
+
+# Print "Enter an integer 0-8:"
+    immassign arg0 to 101
+    syscall 3 arg0
+    immassign arg0 to 110
+    syscall 3 arg0
+    immassign arg0 to 116
+    syscall 3 arg0
+    immassign arg0 to 101
+    syscall 3 arg0
+    immassign arg0 to 114
+    syscall 3 arg0
+    immassign arg0 to 32
+    syscall 3 arg0
+
+    immassign arg0 to 97
+    syscall 3 arg0
+    immassign arg0 to 32
+    syscall 3 arg0
+
+    immassign arg0 to 105
+    syscall 3 arg0
+    immassign arg0 to 110
+    syscall 3 arg0
+    immassign arg0 to 116
+    syscall 3 arg0
+    immassign arg0 to 101
+    syscall 3 arg0
+    immassign arg0 to 103
+    syscall 3 arg0
+    immassign arg0 to 101
+    syscall 3 arg0
+    immassign arg0 to 114
+    syscall 3 arg0
+    immassign arg0 to 32
+    syscall 3 arg0
+
+    immassign arg0 to 0
+    syscall 1 arg0
+    immassign arg0 to 45
+    syscall 3 arg0
+    immassign arg0 to 8
+    syscall 1 arg0
+    immassign arg0 to 58
+    syscall 3 arg0
+    immassign arg0 to 32
+    syscall 3 arg0
+
+# accept user input and save to save0
+    syscall 0 save0
+
+# if user input is greater than 8 ( 16 bit registers cant handle a bigger factorial than 8!), exit with code 1. else keep going
+
+    immassign arg2 to 9
+
+    # if userinput is less than 8 jump over the exit arg
+        jump 2 if arg2 greaterthan save0
+        immassign arg0 to 1
+        syscall 5 arg0
+    
+
+# calculate factorial and save to arg1
+    # copy user input to arg2
+        assign arg2 to save0 plus zero
+    
+    
