@@ -54,14 +54,69 @@
 
     immassign arg2 to 9
 
-    # if userinput is less than 8 jump over the exit arg
+    # if userinput is less than 8 jump over the exit op
         jump 2 if arg2 greaterthan save0
         immassign arg0 to 1
         syscall 5 arg0
-    
-
-# calculate factorial and save to arg1
     # copy user input to arg2
         assign arg2 to save0 plus zero
+
+# calculate factorial and save to arg1
+    immassign temp0 to 1 # save product to temp0
+    immassign save1 to 1 # save1 is always 1
+    # initialise iter0
+    assign iter0 to arg2 plus zero
+    # factorial loop
+        assign arg2 to temp0 plus zero
+        assign arg3 to iter0 plus zero
+
+        #multiplication function
+            immassign arg1  to 0
+            immassign iter1 to 0
+            jump 1 if arg3 greaterthan zero
+            jump 3
+            # addition loop:
+                immassign iter1 to iter1 plus 1
+                assign arg1 to arg1 plus arg2
+                # loop if iter1 lessthan arg3
+                # = loop if arg3 greaterthan iter1
+                jump -3 if arg3 greaterthan iter1
+            # end addition loop
+        # end multiplication function
+        assign temp0 to arg1 plus zero
+
+        immassign iter0 to iter0 plus -1
+        jump -9 if iter0 greaterthan save1
+    # end factorial loop
+    assign arg1 to temp0 plus zero
+
+# print factorial
+    # save factorial to save1
+    assign save1 to arg1 plus zero
+
+    # print the final output
+    syscall 1 save0 # print userinput
+    immassign arg0 to 33 # !
+    syscall 3 arg0
+    immassign arg0 to 32 # ' '
+    syscall 3 arg0
+    immassign arg0 to 61 # =
+    syscall 3 arg0
+    immassign arg0 to 32 # ' '
+    syscall 3 arg0
+    
+    syscall 1 save1
+
+    immassign arg0 10
+    syscall 3 arg0
+
+    syscall 4 zero
+
+
+
+
+
+
+
     
     
