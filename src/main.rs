@@ -32,6 +32,7 @@ enum InterpreterError{
     BadRegisterError,
     BadImmediateError,
     BadSyscallError,
+    AsciiError
 
 }
 
@@ -65,21 +66,28 @@ impl CPU {
 
     // register instructions
     fn assign_plus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> i16 {
-        *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add(*self.registers.get(&reg3).unwrap());
+        if reg1 != Register::Zero {
+            *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add(*self.registers.get(&reg3).unwrap());
+        }
         0
     }
     fn assign_minus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> i16 {
-        *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_sub(*self.registers.get(&reg3).unwrap());
+        if reg1 != Register::Zero {
+            *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_sub(*self.registers.get(&reg3).unwrap());
+        }
         0
     }
 
     //immediate instructions, 2 registers
     fn immassign_plus(&mut self, reg1: Register, reg2: Register, imm: i8) -> i16 {
         if check_range_i5(imm) {
-            *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add_signed(imm.into());
+            if reg1 != Register::Zero {
+                *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add_signed(imm.into());
+            }
             0
         } else {
             println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
     }
@@ -90,6 +98,7 @@ impl CPU {
             } else {0}
         } else {
             println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
     }
@@ -100,6 +109,7 @@ impl CPU {
             } else {0}
         } else {
             println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
     }
@@ -107,10 +117,14 @@ impl CPU {
     // Immediate instructions, 1 register
     fn immassign_imm(&mut self, reg1: Register, imm: u16) -> i16 {
         if check_range_u9(imm) {
-            *self.registers.get_mut(&reg1).unwrap() = imm;
+            if reg1 != Register::Zero {
+                *self.registers.get_mut(&reg1).unwrap() = imm;
+            }
             0
         } else {
             println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
+
             exit(2);
         }
     }
@@ -125,13 +139,25 @@ impl CPU {
 
                 },
                 // 1: PrintUint
-                1 => {println!("{}", *self.registers.get_mut(&reg1).unwrap())}
+                1 => {println!("{}", *self.registers.get(&reg1).unwrap())}
 
                 // 2: PrintInt
-                2 => {}
+                2 => {
+                    let print_buf = *self.registers.get(&reg1).unwrap();
+                    println!("{}", i16::from_ne_bytes(print_buf.to_ne_bytes()))
+                }
 
                 // 3: PrintChar
-                3 => {}
+                3 => {
+                    if *self.registers.get(&reg1).unwrap() <= 127 {
+                        let print_buf = (*self.registers.get(&reg1).unwrap() as u8 as char);
+                        println!("{}", print_buf)
+                    } else {
+                        println!("ASCIIError: Attempted to print invalid Ascii character!");
+                        println!("---Program finished running (Exit code: 4)---");
+                        exit(4)
+                    }
+                }
 
                 // 4: Exit(0)
                 4 => {}
@@ -141,6 +167,7 @@ impl CPU {
                 
                 _ => {
                     println!("BadSyscallError: Invalid system call code");
+                    println!("---Program finished running (Exit code: 3)---");
                     exit(3);
                 }
 
@@ -148,13 +175,20 @@ impl CPU {
             0
         } else {
             println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
             exit(2);
         }
     }
 
     //Immediate instructions, no register
     fn jump(&mut self, imm: i16) -> i16 {
-        imm
+        if check_range_i13(imm) {
+            imm
+        } else {
+            println!("BadImmediateError: Immediate out of range");
+            println!("---Program finished running (Exit code: 2)---");
+            exit(2);
+        }
     }
 
     
@@ -164,13 +198,13 @@ impl CPU {
 
 // Functions that check if an immediate is within range (Rust only has 16 and 8 bit integers, not 5, 9 and 13 bits as I need)
 fn check_range_i5(int: i8) -> bool {
-    todo!()
+    (int >= -16) || (int <= 15)
 }
 fn check_range_u9(int: u16) -> bool {
-    todo!()
+    int <= 511
 }
 fn check_range_i13(int: i16) -> bool {
-    todo!()
+    (int >= -4096) || (int <= 4095)
 }
 
 //Function that returns a Register from a register name in string form
@@ -254,7 +288,7 @@ fn main() {
     while line_counter <= statements.len().try_into().unwrap() {
         let op = statements[line_counter -1].split_whitespace().collect::<Vec<&str>>();
 
-        let execution_result: Result<usize, InterpreterError> = match op[0]{
+        let execution_result: Result<i16, InterpreterError> = match op[0]{
             "assign" => if op[2] == "to" {
                 let reg1 = get_register(op[1]).ok().expect("BadRegisterError: No register of that name!");
                 let reg2 = get_register(op[3]).ok().expect("BadRegisterError: No register of that name!");
@@ -317,7 +351,7 @@ fn main() {
                 }
             },
             "syscall" => {
-                let reg1 = get_register(op[2]).ok().expect("BadRegisterError: No register of that name!");
+                let reg1 = get_register(op[2]).expect("BadRegisterError: No register of that name!");
                 let imm: u16 = op[1].parse::<u16>().expect("Invalid immediate size");
                 Ok(cpu.syscall(reg1, imm))
             },
@@ -325,17 +359,24 @@ fn main() {
             _ => Err(InterpreterError::SyntaxError)
         };
 
-        let mut jump_number: usize;
+        let jump_number: i16;
         match execution_result {
-            Ok(_) => {jump_number = execution_result.ok().unwrap() },
+            Ok(_) => {jump_number = execution_result.ok().unwrap()},
             Err(error) => {
-                println!("{error:?}, core dumped ({cpu:?})");
+                println!("{error:?}, registers dumped ({cpu:?})");
+                println!("---Program finished running (Exit code: 1)---");
                 exit(1);
             }
         }
         
         if op[0] == "jump" {
-            line_counter += jump_number
+            let abs_jump_number: u16 = jump_number.abs().try_into().unwrap();
+
+            if jump_number >= 0 {
+            line_counter += abs_jump_number as usize;
+            } else {
+                line_counter -= abs_jump_number as usize;
+            }
         }
         line_counter += 1;
     }
