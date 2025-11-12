@@ -64,17 +64,17 @@ impl CPU {
     }
 
     // register instructions
-    fn assign_plus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> usize {
+    fn assign_plus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> i16 {
         *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add(*self.registers.get(&reg3).unwrap());
         0
     }
-    fn assign_minus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> usize {
+    fn assign_minus(&mut self, reg1: Register, reg2: Register, reg3: Register) -> i16 {
         *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_sub(*self.registers.get(&reg3).unwrap());
         0
     }
 
     //immediate instructions, 2 registers
-    fn immassign_plus(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
+    fn immassign_plus(&mut self, reg1: Register, reg2: Register, imm: i8) -> i16 {
         if check_range_i5(imm) {
             *self.registers.get_mut(&reg1).unwrap() = self.registers.get(&reg2).unwrap().wrapping_add_signed(imm.into());
             0
@@ -83,20 +83,20 @@ impl CPU {
             exit(2);
         }
     }
-    fn jump_if_eq(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
+    fn jump_if_eq(&mut self, reg1: Register, reg2: Register, imm: i8) -> i16 {
         if check_range_i5(imm) {
-            if self.registers.get(reg1) == self.registers.get(reg2) {
-                imm.try_into().unwrap()
+            if self.registers.get(&reg1) == self.registers.get(&reg2) {
+                imm.into()
             } else {0}
         } else {
             println!("BadImmediateError: Immediate out of range");
             exit(2);
         }
     }
-    fn jump_if_greater(&mut self, reg1: Register, reg2: Register, imm: i8) -> usize {
+    fn jump_if_greater(&mut self, reg1: Register, reg2: Register, imm: i8) -> i16 {
         if check_range_i5(imm) {
-            if self.registers.get(reg1) > self.registers.get(reg2) {
-                imm.try_into().unwrap()
+            if self.registers.get(&reg1) > self.registers.get(&reg2) {
+                imm.into()
             } else {0}
         } else {
             println!("BadImmediateError: Immediate out of range");
@@ -105,7 +105,7 @@ impl CPU {
     }
 
     // Immediate instructions, 1 register
-    fn immassign_imm(&mut self, reg1: Register, imm: u16) -> usize {
+    fn immassign_imm(&mut self, reg1: Register, imm: u16) -> i16 {
         if check_range_u9(imm) {
             *self.registers.get_mut(&reg1).unwrap() = imm;
             0
@@ -114,15 +114,30 @@ impl CPU {
             exit(2);
         }
     }
-    fn syscall(&mut self, reg1: Register, imm: u16) -> usize {
+    fn syscall(&mut self, reg1: Register, imm: u16) -> i16 {
         if check_range_u9(imm) {
             match imm {
                 // 0: ReadInt > reg1
                 0 => {
                     let mut read_buf = String::new();
                     stdin().read_line(&mut read_buf).ok().unwrap();
-                    read_buf.trim();
+                    *self.registers.get_mut(&reg1).unwrap() = read_buf.trim().parse::<u16>().ok().unwrap();
+
                 },
+                // 1: PrintUint
+                1 => {println!("{}", *self.registers.get_mut(&reg1).unwrap())}
+
+                // 2: PrintInt
+                2 => {}
+
+                // 3: PrintChar
+                3 => {}
+
+                // 4: Exit(0)
+                4 => {}
+
+                // 5: Exit (reg1)
+                5 => {}
                 
                 _ => {
                     println!("BadSyscallError: Invalid system call code");
@@ -138,8 +153,8 @@ impl CPU {
     }
 
     //Immediate instructions, no register
-    fn jump(&mut self, imm: i16) -> usize {
-        todo!()
+    fn jump(&mut self, imm: i16) -> i16 {
+        imm
     }
 
     
