@@ -295,7 +295,7 @@ fn main() {
     let mut line_counter: usize= 1;
     while line_counter <= statements.len() {
         let op = statements[line_counter -1].split_whitespace().collect::<Vec<&str>>();
-
+        
         let execution_result: Result<i16, InterpreterError> = match op[0]{
             "assign" => if op[2] == "to" {
                 let reg1 = get_register(op[1]).expect("BadRegisterError: No register of that name!");
@@ -335,7 +335,7 @@ fn main() {
             "jump" => {
                 match op.len() {
                     6 => {
-                        if op[1] == "if" {
+                        if op[2] == "if" {
                             let reg1 = get_register(op[3]).expect("BadRegisterError: No register of that name!");
                             let reg2 = get_register(op[5]).expect("BadRegisterError: No register of that name!");
                             let imm: i8 = op[1].parse::<i8>().expect("Invalid immediate size");
@@ -371,7 +371,7 @@ fn main() {
         let jump_number: i16 = match execution_result {
             Ok(_) => {execution_result.ok().unwrap()},
             Err(error) => {
-                println!("{error:?}, registers dumped ({cpu:?})");
+                println!("{error:?} at line {line_counter}, registers dumped ({cpu:?})");
                 println!("---Program finished running (Exit code: 1)---");
                 exit(1);
             }
