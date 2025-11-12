@@ -286,6 +286,7 @@ fn main() {
     let mut cpu = CPU::new();
 
     let statements_result = parse_file(&args[1]);
+    
     // An error here means you haven't entered a file with the correct file ending.
     let statements = match statements_result {
         Ok(vec) => vec,
