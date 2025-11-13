@@ -1,6 +1,6 @@
 # az09 Language Specification
 
-The language name is pronounced "Ay Zed Oh Nine" and is based on the regex that matches the character set that the language uses: `[a-z0-9#\- ]`.
+The language name is pronounced "Az Oh Nine" and is based on the regex that matches the character set that the language uses: `[a-z0-9#\- ]`.
 
 The language uses 16-bit instructions,  and 4 bit register addresses (16 registers).
 
