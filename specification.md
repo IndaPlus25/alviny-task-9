@@ -97,7 +97,7 @@ Binary - Name  - Description: Recommended usage (if any)
 
 Sector 10: Arguments --------------------------------------
 1000   - arg0  - Argument 0: Syscall buffer
-1001   - arg1  - Argument 1: Return Buffer
+1001   - arg1  - Argument 1: Return buffer
 1010   - arg2  - Argument 2
 1011   - arg3  - Argument 3
 
@@ -108,4 +108,3 @@ Binary - Name  - Description: Recommended usage (if any)
 1110   - save2 - Saved variable 2
 1111   - save3 - Saved variable 3
 ```
-
